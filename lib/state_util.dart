@@ -46,4 +46,6 @@ class Get {
   static ThemeData get theme {
     return Theme.of(Get.currentContext);
   }
+
+  static void snackbar(String s, String t, {required colorText}) {}
 }

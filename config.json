@@ -1,8 +1,6 @@
 {
     "modules": [
-        "login",
-        "register",
-        "home"
+        "ewallet"
     ],
     "module_directory_name": "module",
     "experimental_mode": false,
