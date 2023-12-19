@@ -13,6 +13,7 @@ class HomeController extends State<HomeView>
   late AnimationController controller;
   late Animation<double> animation;
   bool isNotif = false;
+  late List<bool> roomNotifications;
   String? gcmToken;
   int? roomIds;
 
@@ -21,8 +22,6 @@ class HomeController extends State<HomeView>
     String? token = await FirebaseMessaging.instance.getToken(
       vapidKey: "${MyApi.FCM_KEY}",
     );
-
-    print("FCM Token: $token");
     gcmToken = token;
     return token;
   }
@@ -38,20 +37,25 @@ class HomeController extends State<HomeView>
         var dataSnapshot = event.snapshot;
         if (dataSnapshot.value != null) {
           dynamic value = dataSnapshot.value;
-          if (value is bool) {
+          if (value is bool || value is String) {
+            bool status = value is bool ? value : value.toLowerCase() == 'true';
             bool currentStatus = statusParking[i];
-            if (currentStatus != value) {
+
+            if (currentStatus != status) {
               setState(() {
-                statusParking[i] = value;
+                statusParking[i] = status;
               });
-              if (isNotif && roomIds == i + 1) {
-                sendNotifForMy(i + 1, value);
+
+              if (roomNotifications[i]) {
+                if (status && !currentStatus) {
+                  // Mobil datang kembali setelah sebelumnya kosong
+                  sendNotifForMy(i + 1, status);
+                } else if (!status && currentStatus) {
+                  // Mobil pergi setelah sebelumnya terisi
+                  sendNotifForMy(i + 1, status);
+                }
               }
             }
-          } else if (value is String) {
-            setState(() {
-              statusParking[i] = value.toLowerCase() == 'true';
-            });
           }
         }
       });
@@ -62,7 +66,7 @@ class HomeController extends State<HomeView>
     roomIds = int.parse(roomId.toString());
     getToken();
     if (gcmToken != null) {
-      sendNotifForMy;
+      sendNotifForMy(roomIds!, statusParking[roomIds! - 1]);
     }
   }
 
@@ -84,6 +88,7 @@ class HomeController extends State<HomeView>
   void initState() {
     instance = this;
     super.initState();
+    roomNotifications = List.generate(8, (index) => false);
     controller = AnimationController(
       vsync: this,
       lowerBound: 0.1,
