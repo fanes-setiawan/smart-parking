@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:smart_parking/core.dart';
-import '../controller/ewallet_controller.dart';
 
 class EwalletView extends StatefulWidget {
   const EwalletView({Key? key}) : super(key: key);

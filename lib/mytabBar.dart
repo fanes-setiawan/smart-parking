@@ -144,9 +144,9 @@ class _MyTabBarState extends State<MyTabBar> {
     );
   }
 
-  // Widget _eWallet() {
-  //   return const EwalletView();
-  // }
+  Widget _history() {
+    return const HistoryView();
+  }
 
   Widget _getSelectedScreen(int index) {
     switch (index) {
@@ -156,8 +156,8 @@ class _MyTabBarState extends State<MyTabBar> {
         return _buildMaps();
       case 2:
         return _buildCctv();
-      // case 3:
-      //   return _eWallet();
+      case 3:
+        return _history();
       // case 4:
       //   return _eWallet();
       default:
@@ -280,6 +280,22 @@ class _MyTabBarState extends State<MyTabBar> {
               onTap: () {
                 setState(() {
                   _selectedIndex = 2;
+                  Navigator.pop(context);
+                });
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.history),
+              title: Text(
+                "History",
+                style: TextStyle(
+                  fontWeight:
+                      _selectedIndex == 3 ? FontWeight.bold : FontWeight.normal,
+                ),
+              ),
+              onTap: () {
+                setState(() {
+                  _selectedIndex = 3;
                   Navigator.pop(context);
                 });
               },
